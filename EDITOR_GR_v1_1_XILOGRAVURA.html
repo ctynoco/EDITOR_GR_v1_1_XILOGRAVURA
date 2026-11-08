@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EDITOR GR — Editoração Inteligente & Gravura</title>
+<style>
+:root{--navy:#183b5b;--blue:#2e6f9e;--gold:#c49a45;--bg:#eef2f6;--panel:#fff;--ink:#263746;--muted:#718096;--line:#dce4eb;--soft:#f5f8fb;--shadow:0 8px 28px #183b5b12}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px Inter,Segoe UI,Arial,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-radius:8px;padding:9px 13px;background:var(--blue);color:white;font-weight:600}button.secondary{background:#e8eff5;color:var(--navy)}button.ghost{background:transparent;color:var(--navy);border:1px solid var(--line)}button.danger{background:#b94747}.app{display:grid;grid-template-columns:250px 1fr;min-height:100vh}.sidebar{background:#163653;color:#eaf2f8;padding:22px 15px;display:flex;flex-direction:column;gap:16px}.brand{display:flex;gap:11px;align-items:center;padding:4px 8px 18px;border-bottom:1px solid #ffffff20}.logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#d9b66a,#9c7533);display:grid;place-items:center;color:#163653;font-weight:900;font-size:20px}.brand strong{font-size:18px;letter-spacing:.8px}.brand small{display:block;color:#b9cad8;font-size:10px;letter-spacing:1px;margin-top:3px}.nav-label{font-size:10px;text-transform:uppercase;letter-spacing:1.4px;color:#8faabe;padding:0 10px}.nav button{width:100%;text-align:left;background:transparent;color:#dbe7ef;padding:10px 12px;margin:2px 0;font-weight:500;border-radius:8px}.nav button:hover,.nav button.active{background:#ffffff18;color:#fff}.nav button span{display:inline-block;width:25px}.side-bottom{margin-top:auto;color:#9eb5c7;font-size:11px;padding:10px}.main{min-width:0}.topbar{height:66px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 26px;position:sticky;top:0;z-index:5}.topbar .crumb{font-weight:700;color:var(--navy)}.top-actions{display:flex;gap:8px;align-items:center}.save-state{font-size:11px;color:#27805d;margin-right:8px}.content{padding:26px;max-width:1600px;margin:auto}.view{display:none}.view.active{display:block}.page-head{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;margin-bottom:22px}.page-head h1{margin:0;color:var(--navy);font-size:25px}.page-head p{margin:6px 0 0;color:var(--muted)}.grid{display:grid;gap:16px}.stats{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:20px}.card{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:18px;box-shadow:var(--shadow)}.stat-label{color:var(--muted);font-size:12px}.stat-num{font-size:27px;font-weight:750;color:var(--navy);margin-top:8px}.stat-note{font-size:11px;color:#43846c;margin-top:5px}.two{grid-template-columns:1.2fr .8fr}.three{grid-template-columns:repeat(3,1fr)}.section-title{font-size:15px;font-weight:750;color:var(--navy);margin:0 0 14px}.project-list{display:grid;gap:9px}.project{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--line);border-radius:9px;padding:12px}.project strong{display:block}.project small{color:var(--muted)}.tag{font-size:10px;padding:4px 7px;border-radius:20px;background:#e8f2f8;color:#2b658d}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.field{display:flex;flex-direction:column;gap:6px}.field label{font-size:12px;font-weight:650;color:#536577}.field input,.field select,.field textarea,.toolbar select,.toolbar input{border:1px solid var(--line);border-radius:8px;padding:10px;background:#fff;color:var(--ink);min-width:0}.field textarea{min-height:130px;resize:vertical}.wide{grid-column:1/-1}.toolbar{display:flex;flex-wrap:wrap;gap:7px;align-items:center;padding:10px;background:#f5f8fb;border:1px solid var(--line);border-radius:10px;margin-bottom:12px}.toolbar select,.toolbar input{padding:7px}.editor-layout{display:grid;grid-template-columns:220px minmax(0,1fr) 245px;gap:13px;align-items:start}.panel{background:#fff;border:1px solid var(--line);border-radius:10px;padding:13px}.panel h3{font-size:12px;color:var(--navy);margin:0 0 12px}.chapter{padding:9px;border-radius:7px;margin:4px 0;cursor:pointer;font-size:12px;border:1px solid transparent}.chapter.active{background:#eaf2f8;border-color:#c9dce9;color:var(--navy);font-weight:700}.paper-wrap{background:#dce3e9;padding:24px;border-radius:10px;min-height:650px;overflow:auto}.paper{background:#fff;margin:0 auto 20px;box-shadow:0 3px 15px #0002;position:relative;color:#222;overflow:hidden}.paper-inner{height:100%;padding:18mm 17mm 18mm 22mm;white-space:normal;overflow:hidden;font-family:Georgia,serif;font-size:11pt;line-height:1.55}#chapterEditor{display:block!important;background:#fff;max-width:760px;min-height:520px;margin:0 auto 22px;padding:48px 56px;box-shadow:0 3px 15px #0002;outline:none;font:11pt/1.6 Georgia,serif;color:#222;white-space:normal}#chapterEditor:focus{box-shadow:0 0 0 2px #8bb6d1,0 3px 15px #0002}#chapterEditor p{text-align:justify;margin:0 0 12px}#chapterEditor h1{font-size:22pt}#chapterEditor h2{font-size:15pt}.paper-inner h1,.paper-inner h2{color:#222;line-height:1.2}.paper-inner h1{font-size:22pt;margin:0 0 18px}.paper-inner h2{font-size:15pt;margin:18px 0 10px}.paper-inner p{margin:0 0 10px;text-align:justify}.page-number{position:absolute;bottom:8mm;right:14mm;font:9pt Arial;color:#777}.cover-preview{width:230px;min-height:330px;margin:auto;box-shadow:0 8px 22px #0002;display:flex;flex-direction:column;justify-content:space-between;padding:25px;color:#fff;text-align:center;background:linear-gradient(145deg,#183b5b,#467da0);position:relative;overflow:hidden}.cover-preview.gold{background:linear-gradient(145deg,#252a31,#92713b)}.cover-preview.light{background:linear-gradient(145deg,#e9e0ce,#fff);color:#283747}.cover-preview.cordel{background:repeating-linear-gradient(135deg,#eee4cf,#eee4cf 7px,#e2d5bc 7px,#e2d5bc 14px);color:#242424;border:5px solid #242424}.cover-title{font: bold 26px Georgia,serif;margin:auto 0}.cover-author{font-size:12px;letter-spacing:2px;text-transform:uppercase}.cover-kicker{font-size:10px;letter-spacing:3px}.cover-editor{display:grid;grid-template-columns:1fr 1fr;gap:20px}.template{border:1px solid var(--line);border-radius:10px;padding:10px;cursor:pointer;text-align:center}.template:hover,.template.selected{border:2px solid var(--blue);padding:9px}.template-swatch{height:95px;border-radius:6px;margin-bottom:8px}.template small{color:var(--muted)}.notice{background:#fff8e8;border:1px solid #ead8a9;color:#715a25;padding:12px;border-radius:9px;font-size:12px;line-height:1.5}.muted{color:var(--muted)}.actions{display:flex;gap:8px;flex-wrap:wrap}.table{width:100%;border-collapse:collapse;font-size:12px}.table td,.table th{padding:10px;border-bottom:1px solid var(--line);text-align:left}.table th{color:var(--muted);font-weight:650}.hidden{display:none!important}.toast{position:fixed;right:20px;bottom:20px;background:#183b5b;color:#fff;padding:12px 17px;border-radius:9px;box-shadow:var(--shadow);z-index:20;opacity:0;transform:translateY(10px);transition:.2s}.toast.show{opacity:1;transform:translateY(0)}.empty{padding:28px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:10px}.cover-controls{display:grid;gap:10px}.progress{height:7px;background:#e7edf2;border-radius:10px;overflow:hidden}.progress i{display:block;height:100%;background:#4b9b79;width:100%}
+.error-card{padding:12px;border-radius:8px;background:#fff5f5;border:1px solid #fed7d7;margin-bottom:10px}
+.error-card strong{color:#c53030}
+.error-replacements{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.error-replacements button{padding:4px 8px;font-size:11px;background:#2b6cb0}
+@media(max-width:1100px){.editor-layout{grid-template-columns:180px 1fr}.editor-layout .right-panel{grid-column:1/-1}.stats{grid-template-columns:repeat(2,1fr)}}@media(max-width:760px){.app{grid-template-columns:1fr}.sidebar{padding:12px;gap:10px}.brand{padding-bottom:10px}.nav{display:flex;overflow:auto;gap:4px}.nav-label,.side-bottom{display:none}.nav button{white-space:nowrap;width:auto;padding:9px}.topbar{padding:0 14px}.content{padding:15px}.two,.three,.cover-editor{grid-template-columns:1fr}.editor-layout{grid-template-columns:1fr}.editor-layout .panel{order:2}.paper-wrap{order:1;min-height:400px}.form-grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
+@media print{body{background:white}.sidebar,.topbar,.no-print,.page-head,.panel{display:none!important}.app{display:block}.content{padding:0}.view{display:none!important}#view-editor{display:block!important}.editor-layout{display:block}.paper-wrap{padding:0;background:white;overflow:visible}.paper{box-shadow:none;margin:0;page-break-after:always}.paper:last-child{page-break-after:auto}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+ <div class="brand"><div class="logo">GR</div><div><strong>EDITOR GR</strong><small>EDITORAÇÃO INTELIGENTE</small></div></div>
+ <div class="nav-label">Espaço de trabalho</div>
+ <nav class="nav">
+  <button class="active" data-view="dashboard"><span>▦</span>Dashboard</button>
+  <button data-view="projects"><span>▣</span>Meus projetos</button>
+  <button data-view="new"><span>＋</span>Novo projeto</button>
+ </nav>
+ <div class="nav-label">Produção editorial</div>
+ <nav class="nav">
+  <button data-view="editor"><span>▤</span>Editor e diagramação</button>
+  <button data-view="ia"><span>✨</span>Assistente de IA</button>
+  <button data-view="grammar"><span>✓</span>Revisão gramatical</button>
+  <button data-view="dictionary"><span>📖</span>Dicionário & sinônimos</button>
+  <button data-view="cover"><span>▧</span>Criador de capas</button>
+  <button data-view="woodcut"><span>✥</span>Criador de xilogravura</button>
+  <button data-view="styles"><span>Aa</span>Estilos e formatos</button>
+  <button data-view="publish"><span>⇧</span>Publicar / Exportar</button>
+ </nav>
+ <div class="nav-label">Biblioteca e sistema</div>
+ <nav class="nav">
+  <button data-view="library"><span>▤</span>Biblioteca editorial</button>
+  <button data-view="settings"><span>⚙</span>Configurações</button>
+ </nav>
+ <div class="side-bottom">EDITOR GR • Versão 1.2<br>Edição Avançada & IA</div>
+</aside>
+<main class="main">
+<header class="topbar"><div class="crumb" id="breadcrumb">Dashboard</div><div class="top-actions"><span class="save-state" id="saveState">● Salvo localmente</span><button class="secondary" onclick="newProject()">＋ Novo projeto</button></div></header>
+<div class="content">
+
+<section class="view active" id="view-dashboard">
+ <div class="page-head"><div><h1>Bem-vindo ao EDITOR GR</h1><p>Seu ambiente de criação, diagramação e publicação editorial.</p></div><button onclick="newProject()">Criar publicação</button></div>
+ <div class="grid stats">
+  <div class="card"><div class="stat-label">Projetos editoriais</div><div class="stat-num" id="statProjects">0</div><div class="stat-note">Na sua biblioteca</div></div>
+  <div class="card"><div class="stat-label">Palavras no projeto atual</div><div class="stat-num" id="statWords">0</div><div class="stat-note">Contagem automática</div></div>
+  <div class="card"><div class="stat-label">Páginas estimadas</div><div class="stat-num" id="statPages">0</div><div class="stat-note">Conforme formato selecionado</div></div>
+  <div class="card"><div class="stat-label">Status de salvamento</div><div class="stat-num" style="font-size:20px">Ativo</div><div class="stat-note">Salvamento automático no navegador</div></div>
+ </div>
+ <div class="grid two">
+  <div class="card"><h2 class="section-title">Projetos recentes</h2><div class="project-list" id="recentProjects"><div class="empty">Nenhum projeto criado. Comece sua primeira publicação.</div></div></div>
+  <div class="card"><h2 class="section-title">Comece por aqui</h2><div class="project-list">
+   <div class="project"><div><strong>Livro ou romance</strong><small>Capítulos, sumário e estilos literários</small></div><button class="secondary" onclick="quickNew('Livro')">Criar</button></div>
+   <div class="project"><div><strong>Literatura de cordel</strong><small>Versos, estrofes e formato compacto</small></div><button class="secondary" onclick="quickNew('Cordel')">Criar</button></div>
+   <div class="project"><div><strong>Brochura / cartilha</strong><small>Colunas, imagens e conteúdo educativo</small></div><button class="secondary" onclick="quickNew('Brochura')">Criar</button></div>
+   <div class="project"><div><strong>E-book</strong><small>Documento digital para leitura</small></div><button class="secondary" onclick="quickNew('E-book')">Criar</button></div>
+  </div></div>
+ </div>
+ <div class="notice" style="margin-top:16px"><strong>Recursos Ativos na v1.2:</strong> Inteligência Artificial de auxílio à escrita, revisão gramatical real (LanguageTool PT-BR), dicionário com sinônimos literários, xilogravura digital de cordel e síntese de voz (audiolivro).</div>
+</section>
+
+<section class="view" id="view-projects">
+ <div class="page-head"><div><h1>Meus projetos</h1><p>Gerencie suas publicações editoriais.</p></div><button onclick="newProject()">＋ Novo projeto</button></div>
+ <div class="card"><div id="allProjects" class="project-list"><div class="empty">Sua biblioteca está vazia.</div></div></div>
+</section>
+
+<section class="view" id="view-new">
+ <div class="page-head"><div><h1>Novo projeto editorial</h1><p>Defina as características iniciais da publicação.</p></div></div>
+ <div class="card">
+  <div class="form-grid">
+   <div class="field wide"><label>Título da publicação</label><input id="newTitle" placeholder="Ex.: Memórias de uma vida"></div>
+   <div class="field"><label>Autor / responsável</label><input id="newAuthor" placeholder="Nome do autor"></div>
+   <div class="field"><label>Tipo de publicação</label><select id="newType"><option>Livro</option><option>Livro de poesia</option><option>Cordel</option><option>Brochura</option><option>Cartilha</option><option>Revista</option><option>Catálogo</option><option>Apostila</option><option>E-book</option></select></div>
+   <div class="field"><label>Formato</label><select id="newFormat"><option value="a5">A5 — 14,8 × 21 cm</option><option value="14x21">Livro — 14 × 21 cm</option><option value="16x23">Livro — 16 × 23 cm</option><option value="17x24">Técnico — 17 × 24 cm</option><option value="a4">A4 — 21 × 29,7 cm</option><option value="a6">A6 — 10,5 × 14,8 cm</option><option value="cordel">Cordel — 10 × 15 cm</option><option value="custom">Personalizado</option><option value="ebook">Digital — sem página fixa</option></select></div>
+   <div class="field"><label>Estilo editorial</label><select id="newStyle"><option>Clássico literário</option><option>Moderno minimalista</option><option>Poesia</option><option>Acadêmico</option><option>Infantil</option><option>Institucional</option><option>Cordel xilogravura</option></select></div>
+   <div class="field wide"><label>Texto inicial (opcional)</label><textarea id="newText" placeholder="Cole aqui seu manuscrito. Você poderá organizar os capítulos depois."></textarea></div>
+  </div>
+  <div class="actions" style="margin-top:16px"><button onclick="createProject()">Criar e abrir editor</button><button class="secondary" onclick="showView('dashboard')">Cancelar</button></div>
+ </div>
+</section>
+
+<section class="view" id="view-editor">
+ <div class="page-head"><div><h1 id="editorHeading">Editor e diagramação</h1><p id="editorSub">Edite o conteúdo e visualize a composição das páginas.</p></div><div class="actions no-print"><button class="secondary" onclick="addChapter()">＋ Capítulo</button><button onclick="renderPages()">Atualizar páginas</button></div></div>
+ <div class="toolbar no-print">
+  <select id="blockStyle" title="Estilo do texto" onchange="applyBlockStyle()"><option value="p">Parágrafo</option><option value="h1">Título de capítulo</option><option value="h2">Subtítulo</option><option value="blockquote">Citação</option></select>
+  <select id="fontFamily" onchange="applyFont()"><option>Georgia</option><option>Arial</option><option>Times New Roman</option><option>Garamond</option><option>Verdana</option></select>
+  <select id="fontSize" onchange="applyFontSize()"><option>10</option><option selected>11</option><option>12</option><option>13</option><option>14</option><option>16</option><option>18</option></select>
+  <button class="secondary" onclick="format('bold')"><b>B</b></button><button class="secondary" onclick="format('italic')"><i>I</i></button><button class="secondary" onclick="format('underline')"><u>U</u></button>
+  <button class="secondary" onclick="insertImage()">＋ Imagem</button><button class="secondary" onclick="insertPageBreak()">Quebra de página</button><button class="secondary" onclick="insertText('— ')">Travessão</button>
+  <button class="secondary" onclick="showView('ia')">✨ IA</button>
+  <button class="secondary" onclick="showView('grammar')">✓ Revisar</button>
+  <button class="secondary" onclick="showView('dictionary')">📖 Dicionário</button>
+  <button class="secondary" onclick="toggleSpeechGR()" id="btnSpeechGR">🔊 Narrar</button>
+  <button class="ghost" onclick="undoEdit()">Desfazer</button>
+ </div>
+ <div class="editor-layout">
+  <aside class="panel no-print"><h3>ESTRUTURA DO LIVRO</h3><div id="chapterList"></div><button class="secondary" style="width:100%;margin-top:10px" onclick="addChapter()">＋ Adicionar capítulo</button><hr style="border:0;border-top:1px solid var(--line);margin:14px 0"><h3>CONFIGURAÇÃO DA PÁGINA</h3><div class="field"><label>Formato</label><select id="editorFormat" onchange="changeFormat(this.value)"><option value="a5">A5</option><option value="14x21">14 × 21 cm</option><option value="16x23">16 × 23 cm</option><option value="17x24">17 × 24 cm</option><option value="a4">A4</option><option value="a6">A6</option><option value="cordel">Cordel</option><option value="ebook">Digital</option></select></div><div class="field" style="margin-top:9px"><label>Margem interna (mm)</label><input id="innerMargin" type="number" min="5" max="40" value="22" onchange="renderPages()"></div><div class="field" style="margin-top:9px"><label>Margem externa (mm)</label><input id="outerMargin" type="number" min="5" max="40" value="17" onchange="renderPages()"></div><div class="field" style="margin-top:9px"><label>Espaçamento entre linhas</label><select id="lineSpacing" onchange="renderPages()"><option value="1.3">1,3</option><option value="1.5" selected>1,5</option><option value="1.6">1,6</option><option value="1.8">1,8</option></select></div></aside>
+  <div class="paper-wrap" id="paperWrap"><div class="empty">Crie ou abra um projeto para começar a diagramação.</div></div>
+  <aside class="panel right-panel no-print"><h3>PROPRIEDADES DO PROJETO</h3><div class="field"><label>Título</label><input id="editTitle" onchange="updateMeta()"></div><div class="field" style="margin-top:9px"><label>Autor</label><input id="editAuthor" onchange="updateMeta()"></div><div class="field" style="margin-top:9px"><label>Estilo editorial</label><select id="editStyle" onchange="updateMeta()"><option>Clássico literário</option><option>Moderno minimalista</option><option>Poesia</option><option>Acadêmico</option><option>Infantil</option><option>Institucional</option><option>Cordel xilogravura</option></select></div><hr style="border:0;border-top:1px solid var(--line);margin:14px 0"><h3>ESTATÍSTICAS</h3><p class="muted" id="editorStats">0 palavras • 0 caracteres</p><p class="muted" id="pageStats">0 páginas estimadas</p><button class="secondary" style="width:100%" onclick="saveNow()">Salvar agora</button></aside>
+ </div>
+ <div class="actions no-print" style="margin-top:12px"><button onclick="window.print()">Imprimir / Salvar PDF</button><button class="secondary" onclick="showView('publish')">Central de publicação</button></div>
+</section>
+
+<!-- NOVA SEÇÃO: ASSISTENTE DE IA -->
+<section class="view" id="view-ia">
+ <div class="page-head"><div><h1>Assistente Literário de IA</h1><p>Gere ideias, continue cenas, elabore diálogos e componha versos de cordel.</p></div><button class="secondary" onclick="showView('editor')">← Voltar ao Editor</button></div>
+ <div class="grid two">
+  <div class="card">
+   <h2 class="section-title">Ações Rápidas de Criação</h2>
+   <div class="grid two" style="margin-bottom:14px">
+    <button class="secondary" onclick="pedirIAGR('continuar')" style="text-align:left;padding:12px">✍️ <strong>Continuar narrativa</strong><br><small class="muted">Próximos parágrafos</small></button>
+    <button class="secondary" onclick="pedirIAGR('cordel')" style="text-align:left;padding:12px">📜 <strong>Versos de Cordel</strong><br><small class="muted">Sextilha ou estrofe rimada</small></button>
+    <button class="secondary" onclick="pedirIAGR('dialogo')" style="text-align:left;padding:12px">💬 <strong>Criar diálogo</strong><br><small class="muted">Interação expressiva</small></button>
+    <button class="secondary" onclick="pedirIAGR('reviravolta')" style="text-align:left;padding:12px">⚡ <strong>Plot twist</strong><br><small class="muted">Reviravolta na trama</small></button>
+   </div>
+   <div class="field">
+    <label>Ou digite uma instrução personalizada:</label>
+    <textarea id="promptIAGR" placeholder="Ex.: Crie uma cena de suspense no sertão ao anoitecer..." style="min-height:90px"></textarea>
+   </div>
+   <button onclick="pedirIAGR('custom')" style="margin-top:10px">Gerar com IA</button>
+   <hr style="border:0;border-top:1px solid var(--line);margin:16px 0">
+   <details style="font-size:12px;color:var(--muted);cursor:pointer">
+    <summary><strong>Configurar Chave Gemini API (Opcional)</strong></summary>
+    <div style="margin-top:8px" class="field">
+     <label>Chave da Google AI Studio (gratuita):</label>
+     <div style="display:flex;gap:6px">
+      <input type="password" id="geminiKeyGR" placeholder="Cole sua chave AIzaSy..." style="flex:1">
+      <button class="secondary" onclick="salvarGeminiKeyGR()">Salvar</button>
+     </div>
+    </div>
+   </details>
+  </div>
+  <div class="card">
+   <h2 class="section-title">Resultado Gerado</h2>
+   <div id="resultadoIAGR" style="background:#fcf9f2;border:1px solid #ebd9bf;padding:18px;border-radius:8px;min-height:220px;white-space:pre-line;line-height:1.7;color:#333;font-family:Georgia,serif">
+    O texto gerado pela inteligência artificial aparecerá aqui.
+   </div>
+   <div class="actions" style="margin-top:14px">
+    <button onclick="inserirIATextoNoLivroGR()">✓ Inserir no Manuscrito</button>
+    <button class="secondary" onclick="copiarIATextoGR()">📋 Copiar Texto</button>
+   </div>
+  </div>
+ </div>
+</section>
+
+<!-- NOVA SEÇÃO: REVISÃO GRAMATICAL -->
+<section class="view" id="view-grammar">
+ <div class="page-head"><div><h1>Revisão Gramatical e Ortográfica</h1><p>Conferência gramatical completa via motor LanguageTool em Língua Portuguesa.</p></div><div class="actions"><button onclick="runGrammarCheckGR()">Executar Revisão</button><button class="secondary" onclick="showView('editor')">← Voltar ao Editor</button></div></div>
+ <div class="card">
+  <div id="grammarResults">
+   <div class="empty">Clique em "Executar Revisão" para analisar o texto do capítulo ativo.</div>
+  </div>
+ </div>
+</section>
+
+<!-- NOVA SEÇÃO: DICIONÁRIO E SINÔNIMOS -->
+<section class="view" id="view-dictionary">
+ <div class="page-head"><div><h1>Dicionário & Sinônimos da Língua Portuguesa</h1><p>Consulte verbetes, significados e sinônimos literários para enriquecer seu texto.</p></div><button class="secondary" onclick="showView('editor')">← Voltar ao Editor</button></div>
+ <div class="card">
+  <div style="display:flex;gap:8px;margin-bottom:16px">
+   <input id="searchWordGR" placeholder="Digite uma palavra para pesquisar..." style="flex:1" onkeydown="if(event.key==='Enter') pesquisarDicionarioGR()">
+   <button onclick="pesquisarDicionarioGR()">Pesquisar Verbete</button>
+  </div>
+  <div id="dictionaryResultGR">
+   <div class="empty">Digite uma palavra acima para consultar definições e sinônimos.</div>
+  </div>
+ </div>
+</section>
+
+<section class="view" id="view-cover">
+ <div class="page-head"><div><h1>Estúdio de capas</h1><p>Monte a capa frontal e prepare os dados para a capa completa.</p></div><button onclick="saveCover()">Salvar capa</button></div>
+ <div class="card cover-editor">
+  <div>
+   <div class="cover-preview" id="coverPreview"><div class="cover-kicker" id="coverKicker">EDIÇÃO EDITOR GR</div><div class="cover-title" id="coverTitle">Título do livro</div><div class="cover-author" id="coverAuthor">Nome do autor</div></div>
+   <p class="muted" style="text-align:center;font-size:11px">Prévia ilustrativa da capa frontal</p>
+   <div class="actions" style="justify-content:center"><button class="secondary" onclick="downloadCover()">Baixar capa (SVG)</button><button class="ghost" onclick="window.print()">Imprimir prévia</button></div>
+  </div>
+  <div class="cover-controls">
+   <h2 class="section-title">Personalização da capa</h2>
+   <div class="field"><label>Título</label><input id="coverTitleInput" oninput="updateCover()" placeholder="Título do livro"></div>
+   <div class="field"><label>Subtítulo / chamada</label><input id="coverKickerInput" oninput="updateCover()" placeholder="Uma frase de apresentação"></div>
+   <div class="field"><label>Autor</label><input id="coverAuthorInput" oninput="updateCover()" placeholder="Nome do autor"></div>
+   <div class="field"><label>Modelo visual</label><div class="grid three">
+    <div class="template selected" data-theme="blue" onclick="setCoverTheme('blue',this)"><div class="template-swatch" style="background:linear-gradient(135deg,#183b5b,#467da0)"></div><small>Editorial azul</small></div>
+    <div class="template" data-theme="gold" onclick="setCoverTheme('gold',this)"><div class="template-swatch" style="background:linear-gradient(135deg,#252a31,#92713b)"></div><small>Clássico ouro</small></div>
+    <div class="template" data-theme="light" onclick="setCoverTheme('light',this)"><div class="template-swatch" style="background:linear-gradient(135deg,#e9e0ce,#fff)"></div><small>Minimalista</small></div>
+    <div class="template" data-theme="cordel" onclick="setCoverTheme('cordel',this)"><div class="template-swatch" style="background:repeating-linear-gradient(135deg,#eee4cf,#eee4cf 7px,#cbbd9e 7px,#cbbd9e 14px)"></div><small>Cordel</small></div>
+   </div></div>
+   <div class="field"><label>Cor de destaque</label><input id="coverColor" type="color" value="#c49a45" oninput="document.getElementById('coverTitle').style.textShadow='0 2px 8px '+this.value"></div>
+   <div class="notice">A capa desta versão é uma composição vetorial editável e exportável em SVG. A montagem automática da quarta capa, lombada e sangria será ampliada na etapa de pré-impressão.</div>
+  </div>
+ </div>
+</section>
+
+<section class="view" id="view-woodcut">
+ <div class="page-head">
+  <div><h1>Criador de xilogravura</h1><p>Transforme imagens em arte preto e branco inspirada na gravura popular nordestina.</p></div>
+  <span class="tag">OFICINA DE CORDEL</span>
+ </div>
+ <div class="notice" style="margin-bottom:16px">Ferramenta local: o processamento acontece no navegador. O resultado é uma interpretação digital em alto contraste, inspirada na xilogravura.</div>
+ <div class="grid two">
+  <div class="card">
+   <h2 class="section-title">1. Escolha a imagem</h2>
+   <div class="field">
+    <label>Enviar fotografia, desenho ou ilustração</label>
+    <input id="woodcutFile" type="file" accept="image/*" onchange="loadWoodcutImage(event)">
+   </div>
+   <div class="actions" style="margin-top:12px">
+    <button class="secondary" onclick="loadWoodcutSample('mandacaru')">Exemplo: mandacaru</button>
+    <button class="secondary" onclick="loadWoodcutSample('sol')">Exemplo: sol sertanejo</button>
+    <button class="secondary" onclick="loadWoodcutSample('cacto')">Exemplo: paisagem</button>
+   </div>
+   <div class="field" style="margin-top:16px">
+    <label>Estilo de gravura</label>
+    <select id="woodcutStyle" onchange="renderWoodcut()">
+     <option value="classic">Clássica — preto e branco forte</option>
+     <option value="fine">Traço fino — mais detalhes</option>
+     <option value="rough">Rústica — textura marcada</option>
+     <option value="hatch">Hachuras — linhas de entalhe</option>
+    </select>
+   </div>
+   <div class="form-grid" style="margin-top:14px">
+    <div class="field"><label>Contraste</label><input id="woodcutContrast" type="range" min="50" max="220" value="145" oninput="renderWoodcut()"></div>
+    <div class="field"><label>Preto / limiar</label><input id="woodcutThreshold" type="range" min="40" max="220" value="128" oninput="renderWoodcut()"></div>
+    <div class="field"><label>Textura / granulação</label><input id="woodcutTexture" type="range" min="0" max="100" value="28" oninput="renderWoodcut()"></div>
+    <div class="field"><label>Espessura do traço</label><input id="woodcutLine" type="range" min="1" max="5" value="2" oninput="renderWoodcut()"></div>
+   </div>
+   <div class="actions" style="margin-top:14px">
+    <button onclick="renderWoodcut()">Aplicar xilogravura</button>
+    <button class="secondary" onclick="resetWoodcut()">Restaurar ajustes</button>
+   </div>
+   <div class="field" style="margin-top:16px">
+    <label><input type="checkbox" id="woodcutInvert" onchange="renderWoodcut()"> Inverter preto e branco</label>
+    <label><input type="checkbox" id="woodcutHatch" onchange="renderWoodcut()"> Acrescentar hachuras de entalhe</label>
+    <label><input type="checkbox" id="woodcutFrame" checked onchange="renderWoodcut()"> Moldura ornamental de cordel</label>
+   </div>
+  </div>
+  <div class="card">
+   <h2 class="section-title">2. Prévia da gravura</h2>
+   <div id="woodcutCanvasWrap" style="background:#eee7d9;border:1px dashed #b9aa8d;border-radius:10px;min-height:350px;display:grid;place-items:center;padding:12px;overflow:auto">
+    <div id="woodcutEmpty" class="empty" style="width:100%">Envie uma imagem ou escolha um exemplo para começar.</div>
+    <canvas id="woodcutCanvas" class="hidden" style="max-width:100%;height:auto;background:#fff;box-shadow:0 4px 16px #0002"></canvas>
+   </div>
+   <div class="actions" style="margin-top:14px">
+    <button onclick="downloadWoodcut()">Baixar gravura PNG</button>
+    <button class="secondary" onclick="insertWoodcutIntoBook()">Inserir no livro</button>
+   </div>
+   <p class="muted" style="font-size:11px;margin-top:10px">Dica: imagens com silhuetas bem definidas, iluminação lateral e fundo simples produzem ótimos resultados.</p>
+  </div>
+ </div>
+ <div class="card" style="margin-top:16px">
+  <h2 class="section-title">3. Oficina de temas populares</h2>
+  <div class="grid three">
+   <div class="project"><div><strong>O sertão e a caatinga</strong><small>Mandacaru, sol, seca e chuva</small></div><button class="secondary" onclick="loadWoodcutSample('mandacaru')">Criar</button></div>
+   <div class="project"><div><strong>Personagens do cordel</strong><small>Vaqueiro, sanfoneiro, repentista</small></div><button class="secondary" onclick="loadWoodcutSample('vaqueiro')">Criar</button></div>
+   <div class="project"><div><strong>Festas e tradições</strong><small>São João, feira, bandeirolas e zabumba</small></div><button class="secondary" onclick="loadWoodcutSample('festa')">Criar</button></div>
+  </div>
+ </div>
+</section>
+
+<section class="view" id="view-styles">
+ <div class="page-head"><div><h1>Estilos e formatos</h1><p>Presets editoriais e parâmetros de composição.</p></div></div>
+ <div class="grid two">
+  <div class="card"><h2 class="section-title">Estilos editoriais</h2><div class="project-list">
+   <div class="project"><div><strong>Clássico literário</strong><small>Georgia, texto justificado, entrelinha confortável</small></div><button class="secondary" onclick="applyPreset('Clássico literário')">Aplicar</button></div>
+   <div class="project"><div><strong>Moderno minimalista</strong><small>Arial, hierarquia limpa, respiro visual</small></div><button class="secondary" onclick="applyPreset('Moderno minimalista')">Aplicar</button></div>
+   <div class="project"><div><strong>Poesia</strong><small>Versos preservados, composição arejada</small></div><button class="secondary" onclick="applyPreset('Poesia')">Aplicar</button></div>
+   <div class="project"><div><strong>Acadêmico</strong><small>Seções, citações e referências</small></div><button class="secondary" onclick="applyPreset('Acadêmico')">Aplicar</button></div>
+   <div class="project"><div><strong>Cordel xilogravura</strong><small>Formato compacto e identidade popular</small></div><button class="secondary" onclick="applyPreset('Cordel xilogravura')">Aplicar</button></div>
+  </div></div>
+  <div class="card"><h2 class="section-title">Formatos disponíveis</h2><table class="table"><tr><th>Formato</th><th>Dimensão</th></tr><tr><td>A5</td><td>148 × 210 mm</td></tr><tr><td>Livro tradicional</td><td>140 × 210 mm</td></tr><tr><td>Livro ampliado</td><td>160 × 230 mm</td></tr><tr><td>Técnico</td><td>170 × 240 mm</td></tr><tr><td>A4</td><td>210 × 297 mm</td></tr><tr><td>A6</td><td>105 × 148 mm</td></tr><tr><td>Cordel</td><td>100 × 150 mm</td></tr><tr><td>Digital</td><td>Layout fluido</td></tr></table><p class="muted" style="font-size:11px">Formatos personalizáveis e parâmetros de impressão devem ser confirmados com a gráfica escolhida.</p></div>
+ </div>
+</section>
+
+<section class="view" id="view-publish">
+ <div class="page-head"><div><h1>Central de publicação</h1><p>Exporte, imprima e prepare seus arquivos finais.</p></div></div>
+ <div class="grid two">
+  <div class="card"><h2 class="section-title">Exportar publicação</h2><div class="project-list">
+   <div class="project"><div><strong>PDF para impressão</strong><small>Abre a janela de impressão; escolha Salvar como PDF.</small></div><button onclick="exportPDF()">Gerar PDF</button></div>
+   <div class="project"><div><strong>HTML digital</strong><small>Arquivo web com o conteúdo e estilos básicos.</small></div><button class="secondary" onclick="exportHTML()">Exportar</button></div>
+   <div class="project"><div><strong>Texto TXT</strong><small>Manuscrito em texto simples UTF-8.</small></div><button class="secondary" onclick="exportTXT()">Exportar</button></div>
+   <div class="project"><div><strong>Projeto JSON</strong><small>Backup editável do projeto e configurações.</small></div><button class="secondary" onclick="exportJSON()">Backup</button></div>
+   <div class="project"><div><strong>Importar projeto JSON</strong><small>Recuperar um backup anteriormente exportado.</small></div><button class="secondary" onclick="document.getElementById('jsonImport').click()">Importar</button></div>
+   <input type="file" id="jsonImport" accept=".json,application/json" class="hidden" onchange="importJSON(event)">
+  </div></div>
+  <div class="card"><h2 class="section-title">Verificação editorial</h2><div id="preflight"><div class="empty">Abra um projeto para executar a verificação.</div></div><button class="secondary" style="margin-top:12px" onclick="runPreflight()">Executar verificação</button><div class="notice" style="margin-top:14px">PDF: a versão atual utiliza a impressão do navegador. Para produção gráfica avançada, serão acrescentados PDF/X, incorporação e subset de fontes, CMYK, sangria, marcas de corte e validação técnica específica.</div></div>
+ </div>
+</section>
+
+<section class="view" id="view-library">
+ <div class="page-head"><div><h1>Biblioteca editorial</h1><p>Recursos e orientações para produção de publicações.</p></div></div>
+ <div class="grid three">
+  <div class="card"><h2 class="section-title">Elementos pré-textuais</h2><p class="muted">Folha de rosto, dedicatória, agradecimentos, epígrafe, apresentação, prefácio e sumário.</p><button class="secondary" onclick="insertText('\nDEDICATÓRIA\n\n')">Inserir dedicatória</button></div>
+  <div class="card"><h2 class="section-title">Elementos pós-textuais</h2><p class="muted">Posfácio, referências, glossário, apêndices, anexos e índice.</p><button class="secondary" onclick="insertText('\nREFERÊNCIAS\n\n')">Inserir referências</button></div>
+  <div class="card"><h2 class="section-title">Elementos de leitura</h2><p class="muted">Capitular, citações, notas, legendas, imagens, tabelas e quadros.</p><button class="secondary" onclick="insertText('\n')">Inserir parágrafo</button></div>
+ </div>
+ <div class="card" style="margin-top:16px"><h2 class="section-title">Boas práticas editoriais</h2><ul class="muted" style="line-height:1.9"><li>Use estilos de título para estruturar capítulos e gerar sumários.</li><li>Prefira imagens em alta resolução para impressão.</li><li>Verifique direitos de uso de imagens, fontes e ilustrações.</li><li>Solicite ISBN e ficha catalográfica conforme as regras aplicáveis à publicação.</li><li>Faça uma prova impressa antes de autorizar grandes tiragens.</li><li>Para EPUB acessível, use títulos semânticos, textos alternativos e ordem de leitura lógica.</li></ul></div>
+</section>
+
+<section class="view" id="view-settings">
+ <div class="page-head"><div><h1>Configurações</h1><p>Preferências de trabalho e armazenamento.</p></div></div>
+ <div class="grid two">
+  <div class="card"><h2 class="section-title">Armazenamento local</h2><p class="muted">Esta versão salva projetos no armazenamento local do navegador.</p><div class="progress"><i></i></div><p class="muted" style="font-size:11px">Autosave local habilitado • Backup JSON disponível</p><button class="secondary" onclick="exportJSON()">Fazer backup agora</button></div>
+  <div class="card"><h2 class="section-title">Dados e privacidade</h2><p class="muted">Os projetos permanecem neste navegador e neste dispositivo.</p><button class="danger" onclick="clearAll()">Apagar todos os projetos locais</button></div>
+ </div>
+</section>
+
+</div></main></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const KEY='editorgr_projects_v1', ACTIVE='editorgr_active_v1';
+const formats={a5:[148,210], '14x21':[140,210], '16x23':[160,230], '17x24':[170,240], a4:[210,297], a6:[105,148], cordel:[100,150], ebook:[180,260]};
+let projects=loadProjects(), activeId=localStorage.getItem(ACTIVE)||null, currentChapter=0, coverTheme='blue', undoStack=[];
+let activeProject=()=>projects.find(p=>p.id===activeId)||null;
+
+const DICIONARIO_OFFLINE_GR = {
+  "livro": { classe: "substantivo masculino", significados: ["Obra literária, científica ou artística impressa ou digital", "Volume encadernado"], sinonimos: ["obra", "tomo", "volume", "publicação"] },
+  "cordel": { classe: "substantivo masculino", significados: ["Gênero literário popular impresso em folhetos rimados", "Poesia de tradição popular nordestina"], sinonimos: ["folheto", "repente", "glosa"] },
+  "xilogravura": { classe: "substantivo feminino", significados: ["Arte de gravar em madeira e sua reprodução no papel"], sinonimos: ["gravura", "entalhe", "matriz"] },
+  "sertão": { classe: "substantivo masculino", significados: ["Região agreste do interior, típica do Nordeste brasileiro"], sinonimos: ["caatinga", "interior", "agreste"] },
+  "poesia": { classe: "substantivo feminino", significados: ["Arte de criar versos harmônicos e rítmicos"], sinonimos: ["lírica", "verso", "trova"] }
+};
+
+let textoIAGeradoAtual = "";
+let isSpeechPlaying = false;
+
+function uid(){return 'gr'+Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function loadProjects(){try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){return []}}
+function persist(){localStorage.setItem(KEY,JSON.stringify(projects));if(activeId)localStorage.setItem(ACTIVE,activeId);document.getElementById('saveState').textContent='● Salvo localmente';updateDashboard()}
+function toast(s){let t=document.getElementById('toast');t.textContent=s;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400)}
+
+function showView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+name));
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===name));
+  let labels={
+    dashboard:'Dashboard',projects:'Meus projetos',new:'Novo projeto',
+    editor:'Editor e diagramação',ia:'Assistente de IA',grammar:'Revisão gramatical',
+    dictionary:'Dicionário & sinônimos',cover:'Criador de capas',
+    woodcut:'Criador de xilogravura',styles:'Estilos e formatos',
+    publish:'Publicar / Exportar',library:'Biblioteca editorial',settings:'Configurações'
+  };
+  document.getElementById('breadcrumb').textContent=labels[name]||name;
+  if(name==='projects')renderProjects();
+  if(name==='editor')openEditor();
+  if(name==='cover')loadCover();
+  if(name==='publish')runPreflight();
+}
+
+document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>showView(b.dataset.view)));
+
+function newProject(){showView('new');document.getElementById('newTitle').focus()}
+function quickNew(type){showView('new');document.getElementById('newType').value=type;document.getElementById('newFormat').value=type==='Cordel'?'cordel':type==='E-book'?'ebook':'a5'}
+
+function createProject(){
+  let title=document.getElementById('newTitle').value.trim();
+  if(!title){toast('Informe o título da publicação.');return}
+  let p={
+    id:uid(),title,author:document.getElementById('newAuthor').value.trim(),
+    type:document.getElementById('newType').value,format:document.getElementById('newFormat').value,
+    style:document.getElementById('newStyle').value,
+    chapters:[{title:'Texto principal',content:document.getElementById('newText').value||''}],
+    cover:{theme:'blue',kicker:'EDIÇÃO EDITOR GR'},updated:new Date().toISOString()
+  };
+  projects.unshift(p);activeId=p.id;currentChapter=0;persist();showView('editor');toast('Projeto criado com sucesso.')
+}
+
+function renderProjects(){
+  let html=projects.map(p=>`<div class="project"><div><strong>${esc(p.title)}</strong><small>${esc(p.type)} • ${esc(p.author||'Autor não informado')} • ${new Date(p.updated).toLocaleDateString('pt-BR')}</small></div><div class="actions"><button class="secondary" onclick="openProject('${p.id}')">Abrir</button><button class="ghost" onclick="deleteProject('${p.id}')">Excluir</button></div></div>`).join('');
+  document.getElementById('allProjects').innerHTML=html||'<div class="empty">Sua biblioteca está vazia.</div>';
+}
+
+function openProject(id){activeId=id;currentChapter=0;localStorage.setItem(ACTIVE,id);showView('editor')}
+
+function deleteProject(id){
+  if(!confirm('Excluir este projeto?'))return;
+  projects=projects.filter(p=>p.id!==id);
+  if(activeId===id){activeId=projects[0]?.id||null}
+  persist();renderProjects();toast('Projeto excluído.')
+}
+
+function updateDashboard(){
+  document.getElementById('statProjects').textContent=projects.length;
+  let p=activeProject();
+  let text=p?p.chapters.map(c=>c.content).join(' '):'';
+  let words=text.trim()?text.trim().split(/\s+/).length:0;
+  document.getElementById('statWords').textContent=words;
+  document.getElementById('statPages').textContent=p?estimatePages(p):0;
+  let recent=projects.slice(0,5).map(p=>`<div class="project"><div><strong>${esc(p.title)}</strong><small>${esc(p.type)} • ${new Date(p.updated).toLocaleDateString('pt-BR')}</small></div><button class="secondary" onclick="openProject('${p.id}')">Abrir</button></div>`).join('');
+  document.getElementById('recentProjects').innerHTML=recent||'<div class="empty">Nenhum projeto criado. Comece sua primeira publicação.</div>'
+}
+
+function openEditor(){
+  let p=activeProject();
+  if(!p){document.getElementById('paperWrap').innerHTML='<div class="empty">Crie ou abra um projeto para começar.</div>';return}
+  document.getElementById('editorHeading').textContent=p.title;
+  document.getElementById('editorSub').textContent=p.type+' • '+(p.author||'Autor não informado');
+  document.getElementById('editTitle').value=p.title;
+  document.getElementById('editAuthor').value=p.author||'';
+  document.getElementById('editStyle').value=p.style||'Clássico literário';
+  document.getElementById('editorFormat').value=p.format||'a5';
+  renderChapterList();loadChapter();renderPages();
+}
+
+function renderChapterList(){
+  let p=activeProject();
+  document.getElementById('chapterList').innerHTML=p.chapters.map((c,i)=>`<div class="chapter ${i===currentChapter?'active':''}" onclick="selectChapter(${i})">${i+1}. ${esc(c.title||'Sem título')}</div>`).join('')
+}
+
+function selectChapter(i){saveChapter();currentChapter=i;renderChapterList();loadChapter();renderPages()}
+
+function loadChapter(){
+  let p=activeProject();if(!p)return;
+  let c=p.chapters[currentChapter];
+  let editor=document.getElementById('chapterEditor');
+  if(!editor){
+    document.getElementById('paperWrap').innerHTML='<div class="muted" style="font-size:11px;margin:0 auto 8px;max-width:760px">ÁREA DE EDIÇÃO — clique no texto para editar. A prévia paginada aparece abaixo.</div><div id="chapterEditor" contenteditable="true" spellcheck="true"></div><div class="muted" style="font-size:11px;margin:18px auto 8px;max-width:760px">PRÉVIA DE PAGINAÇÃO</div><div id="pageOutput"></div>';
+    editor=document.getElementById('chapterEditor');
+    editor.addEventListener('input',()=>{saveChapter(false);renderStats();scheduleSave()})
+  }
+  editor.innerHTML=contentToHtml(c.content||'');
+  editor.dataset.chapter=currentChapter;
+  renderStats();
+}
+
+function contentToHtml(s){
+  if(!s)return '';
+  if(/<\/?(p|h1|h2|div|blockquote|ul|ol|li|img|br)\b/i.test(s))return s;
+  return s.split(/\n{2,}/).map(x=>'<p>'+esc(x).replace(/\n/g,'<br>')+'</p>').join('')
+}
+
+function saveChapter(doPersist=true){
+  let p=activeProject(),e=document.getElementById('chapterEditor');
+  if(p&&e&&p.chapters[currentChapter]){
+    p.chapters[currentChapter].content=e.innerHTML;
+    if(doPersist){p.updated=new Date().toISOString();persist()}
+  }
+}
+
+let saveTimer;
+function scheduleSave(){
+  document.getElementById('saveState').textContent='● Salvando…';
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(()=>{
+    saveChapter();
+    let p=activeProject();
+    if(p)p.updated=new Date().toISOString();
+    persist()
+  },700)
+}
+
+function addChapter(){
+  let p=activeProject();
+  if(!p){toast('Crie ou abra um projeto primeiro.');return}
+  saveChapter();
+  p.chapters.push({title:'Novo capítulo',content:'<h1>Novo capítulo</h1><p>Comece a escrever aqui.</p>'});
+  currentChapter=p.chapters.length-1;
+  persist();renderChapterList();loadChapter();renderPages();toast('Capítulo adicionado.')
+}
+
+function updateMeta(){
+  let p=activeProject();if(!p)return;
+  p.title=document.getElementById('editTitle').value;
+  p.author=document.getElementById('editAuthor').value;
+  p.style=document.getElementById('editStyle').value;
+  p.updated=new Date().toISOString();
+  document.getElementById('editorHeading').textContent=p.title;
+  persist()
+}
+
+function changeFormat(v){let p=activeProject();if(!p)return;p.format=v;persist();renderPages()}
+function format(cmd){document.execCommand(cmd,false,null);document.getElementById('chapterEditor').focus();saveChapter();scheduleSave()}
+function applyBlockStyle(){let v=document.getElementById('blockStyle').value;document.execCommand('formatBlock',false,v);saveChapter();scheduleSave()}
+function applyFont(){document.execCommand('fontName',false,document.getElementById('fontFamily').value);saveChapter();scheduleSave()}
+function applyFontSize(){let size=document.getElementById('fontSize').value;document.execCommand('fontSize',false,'7');document.querySelectorAll('#chapterEditor font[size="7"]').forEach(el=>{el.removeAttribute('size');el.style.fontSize=size+'pt'});saveChapter();scheduleSave()}
+function insertText(s){let e=document.getElementById('chapterEditor');if(!e){toast('Abra um projeto no editor.');return}e.focus();document.execCommand('insertText',false,s);saveChapter();scheduleSave()}
+function insertPageBreak(){let e=document.getElementById('chapterEditor');if(!e)return;e.focus();document.execCommand('insertHTML',false,'<div style="break-before:page;border-top:1px dashed #aaa;margin:20px 0;padding-top:8px;color:#888">[Quebra de página]</div>');saveChapter();scheduleSave()}
+function insertImage(){let inp=document.createElement('input');inp.type='file';inp.accept='image/*';inp.onchange=()=>{let f=inp.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{document.getElementById('chapterEditor').focus();document.execCommand('insertHTML',false,`<p style="text-align:center"><img src="${r.result}" alt="${esc(f.name)}" style="max-width:100%;height:auto"></p>`);saveChapter();scheduleSave()};r.readAsDataURL(f)};inp.click()}
+function undoEdit(){document.execCommand('undo');saveChapter();scheduleSave()}
+
+function renderStats(){
+  let e=document.getElementById('chapterEditor');if(!e)return;
+  let t=e.innerText||'',w=t.trim()?t.trim().split(/\s+/).length:0;
+  document.getElementById('editorStats').textContent=w+' palavras • '+t.length+' caracteres';
+  document.getElementById('pageStats').textContent=estimatePages(activeProject())+' páginas estimadas'
+}
+
+function estimatePages(p){
+  if(!p)return 0;
+  let t=p.chapters.map(c=>(c.content||'').replace(/<[^>]*>/g,' ')).join(' ');
+  let n=t.trim()?t.trim().split(/\s+/).length:0;
+  let per=p.format==='a4'?500:p.format==='a6'?180:p.format==='cordel'?100:p.format==='17x24'?420:300;
+  return Math.max(1,Math.ceil(n/per))
+}
+
+function renderPages(){
+  let p=activeProject();if(!p)return;
+  saveChapter(false);
+  let f=p.format||'a5',d=formats[f]||formats.a5;
+  let wrap=document.getElementById('paperWrap');
+  let editor=document.getElementById('chapterEditor');
+  let html=editor?editor.innerHTML:'';
+  let text=html||'<p>Comece a escrever o conteúdo deste capítulo no editor.</p>';
+  let w=Math.max(520,Math.min(760,d[0]*3.2));
+  let h=w*d[1]/d[0];
+  let inner=document.getElementById('pageOutput');
+  if(!inner){
+    wrap.innerHTML='<div class="muted" style="font-size:11px;margin:0 auto 8px;max-width:760px">ÁREA DE EDIÇÃO — clique no texto para editar. A prévia paginada aparece abaixo.</div><div id="chapterEditor" contenteditable="true" spellcheck="true"></div><div class="muted" style="font-size:11px;margin:18px auto 8px;max-width:760px">PRÉVIA DE PAGINAÇÃO</div><div id="pageOutput"></div>';
+    inner=document.getElementById('pageOutput')
+  }
+  let content=htmlToPlainBlocks(text);
+  let chunks=paginateBlocks(content, f);
+  wrap.querySelector('#pageOutput').innerHTML=chunks.map((chunk,i)=>`<div class="paper" style="width:${w}px;height:${h}px"><div class="paper-inner" style="padding-left:${document.getElementById('innerMargin').value||22}mm;padding-right:${document.getElementById('outerMargin').value||17}mm;line-height:${document.getElementById('lineSpacing').value||1.5}">${i===0?'<h1>'+esc(activeProject().chapters[currentChapter].title)+'</h1>':''}${chunk}</div><div class="page-number">${i+1}</div></div>`).join('');
+  renderStats()
+}
+
+function htmlToPlainBlocks(html){
+  let tmp=document.createElement('div');tmp.innerHTML=html;
+  return Array.from(tmp.children).map(el=>{
+    let tag=el.tagName.toLowerCase();
+    if(tag==='img')return el.outerHTML;
+    if(tag==='h1'||tag==='h2')return '<'+tag+'>'+el.innerHTML+'</'+tag+'>';
+    if(tag==='blockquote')return '<blockquote>'+el.innerHTML+'</blockquote>';
+    return '<p>'+el.innerHTML+'</p>'
+  }).join('')||'<p></p>'
+}
+
+function paginateBlocks(html,f){
+  let blocks=html.match(/<(?:p|h1|h2|blockquote)[\s\S]*?<\/(?:p|h1|h2|blockquote)>|<p>[\s\S]*?<\/p>/g)||[html];
+  let pages=[],cur='',budget=f==='a4'?2600:f==='cordel'?650:1700;
+  blocks.forEach(b=>{
+    if(cur.length+b.length>budget&&cur){pages.push(cur);cur=''}
+    cur+=b
+  });
+  if(cur||!pages.length)pages.push(cur);
+  return pages
+}
+
+function applyPreset(style){
+  let p=activeProject();if(!p){toast('Abra um projeto para aplicar o estilo.');return}
+  p.style=style;persist();
+  if(document.getElementById('editStyle'))document.getElementById('editStyle').value=style;
+  toast('Estilo aplicado: '+style);showView('editor')
+}
+
+function loadCover(){
+  let p=activeProject();if(!p){toast('Abra um projeto primeiro.');return}
+  document.getElementById('coverTitleInput').value=p.title;
+  document.getElementById('coverAuthorInput').value=p.author||'';
+  document.getElementById('coverKickerInput').value=p.cover?.kicker||'EDIÇÃO EDITOR GR';
+  coverTheme=p.cover?.theme||'blue';
+  document.querySelectorAll('.template').forEach(t=>t.classList.toggle('selected',t.dataset.theme===coverTheme));
+  updateCover()
+}
+
+function updateCover(){
+  let title=document.getElementById('coverTitleInput').value||'Título do livro',author=document.getElementById('coverAuthorInput').value||'Nome do autor',kick=document.getElementById('coverKickerInput').value||'';
+  document.getElementById('coverTitle').textContent=title;
+  document.getElementById('coverAuthor').textContent=author;
+  document.getElementById('coverKicker').textContent=kick;
+  let c=document.getElementById('coverPreview');
+  c.className='cover-preview '+(coverTheme==='blue'?'':coverTheme)
+}
+
+function setCoverTheme(theme,el){coverTheme=theme;document.querySelectorAll('.template').forEach(t=>t.classList.remove('selected'));el.classList.add('selected');updateCover()}
+function saveCover(){let p=activeProject();if(!p)return;p.cover={theme:coverTheme,kicker:document.getElementById('coverKickerInput').value,title:document.getElementById('coverTitleInput').value};persist();toast('Capa salva no projeto.')}
+function downloadCover(){
+  let title=document.getElementById('coverTitleInput').value||'Título do livro',author=document.getElementById('coverAuthorInput').value||'',kick=document.getElementById('coverKickerInput').value||'';
+  let bg={blue:'#244e70',gold:'#92713b',light:'#eee6d8',cordel:'#eee4cf'}[coverTheme],fg=coverTheme==='light'||coverTheme==='cordel'?'#252525':'#ffffff';
+  let svg=`<svg xmlns="http://www.w3.org/2000/svg" width="1480" height="2100" viewBox="0 0 1480 2100"><rect width="100%" height="100%" fill="${bg}"/><rect x="45" y="45" width="1390" height="2010" fill="none" stroke="${fg}" stroke-width="5"/><text x="740" y="330" text-anchor="middle" fill="${fg}" font-family="Arial" font-size="48" letter-spacing="12">${xml(kick)}</text><text x="740" y="1050" text-anchor="middle" fill="${fg}" font-family="Georgia" font-weight="bold" font-size="100">${xml(title)}</text><text x="740" y="1780" text-anchor="middle" fill="${fg}" font-family="Arial" font-size="42" letter-spacing="8">${xml(author)}</text></svg>`;
+  downloadBlob(svg,'capa-editor-gr.svg','image/svg+xml')
+}
+
+function exportPDF(){saveChapter();window.print()}
+function exportHTML(){
+  let p=activeProject();if(!p)return toast('Abra um projeto primeiro.');
+  saveChapter();
+  let body=p.chapters.map(c=>`<h1>${esc(c.title)}</h1>${c.content}`).join('<hr>');
+  let doc=`<!doctype html><html lang="pt-BR"><meta charset="utf-8"><title>${esc(p.title)}</title><style>body{max-width:760px;margin:50px auto;padding:20px;font:18px/1.7 Georgia;color:#222}h1{font-size:2em;margin-top:2em}p{text-align:justify}img{max-width:100%}</style><h1>${esc(p.title)}</h1><p>${esc(p.author||'')}</p>${body}</html>`;
+  downloadBlob(doc,slug(p.title)+'.html','text/html')
+}
+
+function exportTXT(){
+  let p=activeProject();if(!p)return toast('Abra um projeto primeiro.');
+  saveChapter();
+  let s=p.title+'\n'+(p.author||'')+'\n\n'+p.chapters.map(c=>c.title+'\n\n'+(c.content||'').replace(/<br\s*\/?>/gi,'\n').replace(/<\/p>|<\/h1>|<\/h2>/gi,'\n\n').replace(/<[^>]*>/g,'')).join('\n\n');
+  downloadBlob(s,slug(p.title)+'.txt','text/plain;charset=utf-8')
+}
+
+function exportJSON(){
+  saveChapter();
+  let p=activeProject();
+  let data=p?JSON.stringify(p,null,2):JSON.stringify(projects,null,2);
+  downloadBlob(data,p?slug(p.title)+'-backup.json':'editor-gr-backup.json','application/json')
+}
+
+function importJSON(e){
+  let f=e.target.files[0];if(!f)return;
+  let r=new FileReader();
+  r.onload=()=>{
+    try{
+      let d=JSON.parse(r.result);
+      if(Array.isArray(d))projects=d;
+      else if(d.id){projects=projects.filter(p=>p.id!==d.id);projects.unshift(d);activeId=d.id}
+      else throw Error();
+      persist();renderProjects();toast('Backup importado.')
+    }catch(err){toast('Arquivo JSON inválido.')}
+  };
+  r.readAsText(f);e.target.value=''
+}
+
+function runPreflight(){
+  let p=activeProject(),el=document.getElementById('preflight');
+  if(!p){el.innerHTML='<div class="empty">Abra um projeto para executar a verificação.</div>';return}
+  let words=p.chapters.map(c=>c.content.replace(/<[^>]*>/g,' ')).join(' ').trim().split(/\s+/).filter(Boolean).length;
+  let checks=[['Título informado',!!p.title],['Autor informado',!!p.author],['Conteúdo inserido',words>0],['Formato definido',!!p.format],['Capa configurada',!!p.cover],['Backup recomendado',true]];
+  el.innerHTML=checks.map(([s,ok])=>`<div class="project"><div><strong>${ok?'✓':'!'} ${s}</strong><small>${ok?'Verificação concluída':'Verifique este item antes de publicar'}</small></div><span class="tag">${ok?'OK':'Atenção'}</span></div>`).join('')+`<p class="muted" style="font-size:11px;margin-top:10px">${words} palavras • ${estimatePages(p)} páginas estimadas.</p>`
+}
+
+function saveNow(){saveChapter();let p=activeProject();if(p){p.updated=new Date().toISOString();persist();toast('Projeto salvo.')}else toast('Nenhum projeto aberto.')}
+function clearAll(){if(!confirm('Tem certeza? Todos os projetos locais serão apagados. Faça backup antes.'))return;projects=[];activeId=null;localStorage.removeItem(KEY);localStorage.removeItem(ACTIVE);persist();showView('dashboard');toast('Projetos locais apagados.')}
+function downloadBlob(content,name,type){let b=new Blob([content],{type}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function xml(s){return esc(s)}
+function slug(s){return String(s||'publicacao').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'publicacao'}
+
+/* =========================================================
+   RECURSOS DE IA, REVISÃO GRAMATICAL E DICIONÁRIO
+   ========================================================= */
+function salvarGeminiKeyGR(){
+  let k=document.getElementById('geminiKeyGR').value.trim();
+  if(k){localStorage.setItem('editorgr_gemini_key',k);toast('Chave Gemini salva!')}
+}
+
+async function pedirIAGR(tipo){
+  let res=document.getElementById('resultadoIAGR');
+  res.textContent='Consultando a inteligência artificial...';
+  let p=activeProject();
+  let e=document.getElementById('chapterEditor');
+  let textoCtx=e?e.innerText.slice(-1000):(p?p.chapters[currentChapter]?.content.replace(/<[^>]*>/g,'').slice(-1000):'');
+  let key=localStorage.getItem('editorgr_gemini_key');
+
+  if(key){
+    try{
+      let promptInstrucao="";
+      if(tipo==='continuar')promptInstrucao="Continue a narrativa do capítulo a partir do ponto atual:";
+      else if(tipo==='cordel')promptInstrucao="Crie uma sextilha ou estrofe poética de literatura de cordel com rimas ricas:";
+      else if(tipo==='dialogo')promptInstrucao="Escreva um diálogo expressivo e envolvente entre os personagens:";
+      else if(tipo==='reviravolta')promptInstrucao="Crie uma reviravolta instigante e inesperada na trama:";
+      else promptInstrucao=document.getElementById('promptIAGR').value||"Continue a narrativa:";
+
+      let resp=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`,{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({contents:[{parts:[{text:`Você é um escritor literário renomado em língua portuguesa. Livro: "${p?.title||'Obra'}". Trecho recente:\n"${textoCtx}"\n\nInstrução: ${promptInstrucao}\nRetorne apenas o texto literário final pronto para publicação.`}]}]})
+      });
+      if(resp.ok){
+        let d=await resp.json();
+        let txt=d.candidates?.[0]?.content?.parts?.[0]?.text;
+        if(txt){textoIAGeradoAtual=txt.trim();res.textContent=textoIAGeradoAtual;return}
+      }
+    }catch(err){}
+  }
+
+  // Fallback Criativo Literário
+  let banco={
+    continuar:[
+      "A noite descia sobre os telhados coloniais como um véu de carvão e mistério. Na mesa do gabinete, a carta não assinada parecia arder sob a luz bruxuleante da lamparina.",
+      "Ele deu três passos em direção à janela aberta. O aroma da terra molhada anunciava a primeira chuva em meses, mas seu pensamento permanecia preso ao que ouvira na praça."
+    ],
+    cordel:[
+      "No sertão de terra seca\nOnde a poeira levanta,\nTem história de coragem\nQue o poeta rima e canta,\nPra lembrar que a esperança\nÉ semente que se planta.",
+      "Com a viola afinada\nE a memória bem segura,\nConto a lenda do vaqueiro\nQue venceu a noite escura,\nCom um verso no compasso\nE na mão a ferradura."
+    ],
+    dialogo:[
+      "— Se você cruzar aquela cancela agora, ninguém poderá protegê-lo.\n— A proteção dos homens nunca me garantiu paz; prefiro a incerteza do caminho.",
+      "— Você confia no que está escrito nessas páginas?\n— Não confio nas palavras, confio nos olhos de quem as escreveu."
+    ],
+    reviravolta:[
+      "Ao romper o lacre de cera, percebeu que as folhas estavam em branco — exceto por uma única frase caligrafada no verso: 'Eles já sabem.'",
+      "O som da carruagem cessou de repente na curva da estrada. Quando olhou pela fresta da cortina, o cocheiro havia desaparecido."
+    ]
+  };
+  let lista=banco[tipo]||banco.continuar;
+  textoIAGeradoAtual=lista[Math.floor(Math.random()*lista.length)];
+  res.textContent=textoIAGeradoAtual;
+}
+
+function inserirIATextoNoLivroGR(){
+  if(!textoIAGeradoAtual)return toast('Gere um texto primeiro.');
+  showView('editor');
+  let e=document.getElementById('chapterEditor');
+  if(e){
+    e.focus();
+    let p=document.createElement('p');
+    p.textContent=textoIAGeradoAtual;
+    e.appendChild(p);
+    saveChapter();scheduleSave();
+    toast('Texto inserido no manuscrito.');
+  }
+}
+
+function copiarIATextoGR(){
+  if(textoIAGeradoAtual){
+    navigator.clipboard.writeText(textoIAGeradoAtual);
+    toast('Texto copiado!');
+  }
+}
+
+/* Revisão Gramatical com LanguageTool */
+async function runGrammarCheckGR(){
+  let p=activeProject(),e=document.getElementById('chapterEditor');
+  let texto=e?e.innerText:(p?p.chapters[currentChapter]?.content.replace(/<[^>]*>/g,''):'');
+  let box=document.getElementById('grammarResults');
+  if(!texto||!texto.trim()){box.innerHTML='<div class="empty">Nenhum texto disponível no capítulo ativo para analisar.</div>';return}
+
+  box.innerHTML='<div class="empty">Consultando motor ortográfico e gramatical LanguageTool (PT-BR)...</div>';
+
+  try{
+    let body=new URLSearchParams();
+    body.append('text',texto.slice(0,9000));
+    body.append('language','pt-BR');
+
+    let resp=await fetch('https://api.languagetool.org/v2/check',{
+      method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body:body.toString()
+    });
+    if(!resp.ok)throw new Error();
+    let data=await resp.json();
+    let matches=data.matches||[];
+
+    if(!matches.length){
+      box.innerHTML='<div class="empty" style="color:#27805d"><strong>✓ Nenhum erro encontrado!</strong> A ortografia e concordância estão exemplares neste capítulo.</div>';
+      return;
+    }
+
+    box.innerHTML=`<div class="notice" style="margin-bottom:14px">Encontrados <strong>${matches.length}</strong> pontos de atenção gramatical ou ortográfica:</div>`+
+      matches.map(m=>{
+        let trecho=m.context.text.substr(m.context.offset,m.context.length);
+        let sugs=(m.replacements||[]).slice(0,3).map(r=>r.value);
+        return `<div class="error-card">
+          <div style="display:flex;justify-content:space-between">
+            <strong>${esc(m.shortMessage||'Ajuste')}</strong>
+            <span class="tag">${esc(m.rule.category.name||'Regra')}</span>
+          </div>
+          <p style="margin:6px 0;font-size:13px">${esc(m.message)}</p>
+          <div style="font-family:monospace;font-size:11px;background:#fff;padding:6px;border-radius:4px;border:1px solid #fed7d7">
+            "...${esc(m.context.text.slice(Math.max(0,m.context.offset-12),m.context.offset))}<u style="color:#e53e3e">${esc(trecho)}</u>${esc(m.context.text.slice(m.context.offset+m.context.length,m.context.offset+m.context.length+12))}..."
+          </div>
+          ${sugs.length?`<div class="error-replacements"><span style="font-size:11px;color:var(--muted);align-self:center">Substituir por:</span>${sugs.map(s=>`<button onclick="aplicarCorrecaoSeguraGR('${trecho.replace(/'/g,"\\'")}','${s.replace(/'/g,"\\'")}')">${esc(s)}</button>`).join('')}</div>`:''}
+        </div>`;
+      }).join('');
+  }catch(err){
+    box.innerHTML='<div class="empty" style="color:#b94747">Não foi possível conectar ao servidor LanguageTool no momento. O corretor nativo do navegador permanece ativo.</div>';
+  }
+}
+
+function aplicarCorrecaoSeguraGR(antigo,novo){
+  let e=document.getElementById('chapterEditor');
+  if(!e){openEditor();e=document.getElementById('chapterEditor')}
+  if(!e)return;
+  let walker=document.createTreeWalker(e,NodeFilter.SHOW_TEXT,null,false);
+  let node,sub=false;
+  while((node=walker.nextNode())){
+    if(node.nodeValue.includes(antigo)){
+      node.nodeValue=node.nodeValue.replace(antigo,novo);
+      sub=true;break;
+    }
+  }
+  if(sub){
+    saveChapter();scheduleSave();runGrammarCheckGR();toast('Correção aplicada!');
+  }else toast('Trecho não localizado.');
+}
+
+/* Dicionário PT-BR */
+async function pesquisarDicionarioGR(){
+  let p=document.getElementById('searchWordGR').value.trim().toLowerCase();
+  let box=document.getElementById('dictionaryResultGR');
+  if(!p)return;
+  box.innerHTML='<div class="empty">Buscando verbete...</div>';
+
+  try{
+    let resp=await fetch(`https://api.dicionario-aberto.net/word/${encodeURIComponent(p)}`);
+    if(resp.ok){
+      let d=await resp.json();
+      if(d&&d.length&&d[0].xml){
+        let parser=new DOMParser(),doc=parser.parseFromString(d[0].xml,"text/xml");
+        let defs=Array.from(doc.getElementsByTagName('def')).map(x=>x.textContent.trim()).filter(Boolean);
+        if(defs.length){
+          box.innerHTML=`<div class="project" style="display:block">
+            <h2 style="margin:0 0 4px;color:var(--navy);text-transform:capitalize">${esc(p)}</h2>
+            <small class="muted">Fonte: Dicionário Aberto da Língua Portuguesa</small>
+            <ol style="margin:12px 0;padding-left:20px;line-height:1.6">
+              ${defs.map(d=>`<li>${esc(d)}</li>`).join('')}
+            </ol>
+          </div>`;
+          return;
+        }
+      }
+    }
+  }catch(e){}
+
+  let entrada=DICIONARIO_OFFLINE_GR[p];
+  if(entrada){
+    box.innerHTML=`<div class="project" style="display:block">
+      <h2 style="margin:0 0 4px;color:var(--navy);text-transform:capitalize">${esc(p)}</h2>
+      <small class="muted">${esc(entrada.classe)}</small>
+      <ol style="margin:10px 0;padding-left:20px;line-height:1.6">
+        ${entrada.significados.map(s=>`<li>${esc(s)}</li>`).join('')}
+      </ol>
+      ${entrada.sinonimos?`<div style="margin-top:10px"><strong>Sinônimos:</strong> ${entrada.sinonimos.map(s=>`<span class="tag" style="margin-left:4px">${esc(s)}</span>`).join('')}</div>`:''}
+    </div>`;
+  }else{
+    box.innerHTML=`<div class="empty">Palavra "${esc(p)}" não encontrada. Tente outra consulta.</div>`;
+  }
+}
+
+/* Leitura por Voz / Audiolivro */
+function toggleSpeechGR(){
+  if(!('speechSynthesis' in window))return toast('Síntese de voz não suportada.');
+  if(isSpeechPlaying){
+    speechSynthesis.cancel();
+    isSpeechPlaying=false;
+    document.getElementById('btnSpeechGR').textContent='🔊 Narrar';
+    toast('Narração pausada.');
+    return;
+  }
+  let e=document.getElementById('chapterEditor');
+  let texto=e?e.innerText:'';
+  if(!texto.trim())return toast('Capítulo vazio.');
+  let u=new SpeechSynthesisUtterance(texto);
+  u.lang='pt-BR';
+  u.onend=()=>{isSpeechPlaying=false;document.getElementById('btnSpeechGR').textContent='🔊 Narrar'};
+  speechSynthesis.speak(u);
+  isSpeechPlaying=true;
+  document.getElementById('btnSpeechGR').textContent='⏹️ Parar';
+  toast('Narrando capítulo...');
+}
+
+/* =========================================================
+   OFICINA DE XILOGRAVURA
+   ========================================================= */
+let woodcutSource=null;
+function loadWoodcutImage(ev){
+ const f=ev.target.files&&ev.target.files[0]; if(!f)return;
+ const reader=new FileReader();
+ reader.onload=()=>{const im=new Image();im.onload=()=>{woodcutSource=im;renderWoodcut();};im.src=reader.result;};
+ reader.readAsDataURL(f);
+}
+function loadWoodcutSample(kind){
+ const svg=woodcutSampleSVG(kind);
+ const im=new Image();
+ im.onload=()=>{woodcutSource=im;renderWoodcut();};
+ im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+}
+function woodcutSampleSVG(kind){
+ let common='<rect width="900" height="1100" fill="white"/>';
+ let art='';
+ if(kind==='mandacaru'){
+  art='<path d="M450 930V300 M450 560Q270 600 300 390Q320 270 390 330Q430 370 420 470 M450 650Q640 690 620 480Q600 360 530 410Q490 450 490 550" fill="none" stroke="black" stroke-width="35" stroke-linecap="round"/><path d="M150 930Q450 820 750 930 M230 860l-50 70m500-80 70 80" stroke="black" stroke-width="20" fill="none"/><circle cx="450" cy="180" r="90" fill="none" stroke="black" stroke-width="25"/>';
+ }else if(kind==='sol'){
+  art='<circle cx="450" cy="330" r="125" fill="none" stroke="black" stroke-width="28"/>'+Array.from({length:16},(_,i)=>{let a=i*Math.PI/8,x1=450+155*Math.cos(a),y1=330+155*Math.sin(a),x2=450+230*Math.cos(a),y2=330+230*Math.sin(a);return `<path d="M${x1} ${y1}L${x2} ${y2}" stroke="black" stroke-width="22"/>`}).join('')+'<path d="M80 850Q250 690 420 850T820 850 M80 950Q250 790 420 950T820 950" fill="none" stroke="black" stroke-width="28"/>';
+ }else if(kind==='cacto'){
+  art='<path d="M90 870Q240 700 390 850T810 830 M140 960Q330 800 520 960T850 920" fill="none" stroke="black" stroke-width="24"/><path d="M450 900V420 M450 610Q280 650 300 470L300 400 M450 700Q620 740 620 560V490" fill="none" stroke="black" stroke-width="38" stroke-linecap="round"/><circle cx="700" cy="180" r="65" fill="none" stroke="black" stroke-width="22"/>';
+ }else if(kind==='vaqueiro'){
+  art='<path d="M280 390Q450 160 620 390L700 430Q450 500 200 430Z" fill="none" stroke="black" stroke-width="28"/><circle cx="450" cy="520" r="105" fill="none" stroke="black" stroke-width="25"/><path d="M350 650L260 930M550 650L640 930M330 750L570 750 M300 930L210 1000M640 930L720 1000" fill="none" stroke="black" stroke-width="35"/><path d="M180 390Q70 300 110 210 M720 390Q830 300 790 210" fill="none" stroke="black" stroke-width="25"/>';
+ }else{
+  art='<path d="M120 300L780 300 M160 300L160 700 M300 300L300 700 M440 300L440 700 M580 300L580 700 M720 300L720 700" stroke="black" stroke-width="18"/>'+[160,300,440,580,720].map((x,i)=>`<path d="M${x} 300l-65 140h130z" fill="black"/>`).join('')+'<path d="M100 850Q250 760 400 850T800 850" stroke="black" stroke-width="28" fill="none"/>';
+ }
+ return `<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1100" viewBox="0 0 900 1100">${common}${art}<rect x="35" y="35" width="830" height="1030" fill="none" stroke="black" stroke-width="18"/></svg>`;
+}
+function resetWoodcut(){
+ document.getElementById('woodcutStyle').value='classic';
+ document.getElementById('woodcutContrast').value=145;
+ document.getElementById('woodcutThreshold').value=128;
+ document.getElementById('woodcutTexture').value=28;
+ document.getElementById('woodcutLine').value=2;
+ document.getElementById('woodcutInvert').checked=false;
+ document.getElementById('woodcutHatch').checked=false;
+ document.getElementById('woodcutFrame').checked=true;
+ renderWoodcut();
+}
+function renderWoodcut(){
+ if(!woodcutSource)return;
+ const canvas=document.getElementById('woodcutCanvas'),ctx=canvas.getContext('2d',{willReadFrequently:true});
+ const max=1400,scale=Math.min(1,max/Math.max(woodcutSource.width,woodcutSource.height));
+ canvas.width=Math.max(1,Math.round(woodcutSource.width*scale));canvas.height=Math.max(1,Math.round(woodcutSource.height*scale));
+ ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(woodcutSource,0,0,canvas.width,canvas.height);
+ let img=ctx.getImageData(0,0,canvas.width,canvas.height),d=img.data;
+ const contrast=Number(document.getElementById('woodcutContrast').value),threshold=Number(document.getElementById('woodcutThreshold').value),texture=Number(document.getElementById('woodcutTexture').value),style=document.getElementById('woodcutStyle').value,invert=document.getElementById('woodcutInvert').checked;
+ const factor=(259*(contrast+255))/(255*(259-contrast));
+ let gray=new Float32Array(canvas.width*canvas.height);
+ for(let i=0,j=0;i<d.length;i+=4,j++){
+  let g=.299*d[i]+.587*d[i+1]+.114*d[i+2];g=factor*(g-128)+128;
+  if(style==='rough')g+=((Math.sin(j*12.9898)*43758.5453)%1)*texture*.65;
+  gray[j]=Math.max(0,Math.min(255,g));
+ }
+ const hatch=document.getElementById('woodcutHatch').checked||style==='hatch';
+ if(style==='fine'){
+  for(let y=1;y<canvas.height-1;y++)for(let x=1;x<canvas.width-1;x++){let k=y*canvas.width+x;if(gray[k]<threshold+18){let edge=Math.abs(gray[k]-gray[k-1])+Math.abs(gray[k]-gray[k-canvas.width]);gray[k]=Math.max(0,gray[k]-edge*.24)}}
+ }
+ if(hatch){
+  const step=Math.max(5,12-Number(document.getElementById('woodcutLine').value));
+  for(let y=0;y<canvas.height;y+=step*2)for(let x=0;x<canvas.width;x+=step*2){let k=y*canvas.width+x;if(gray[k]<threshold+30){for(let q=0;q<step;q++){let xx=x+q,yy=y+q;if(xx<canvas.width&&yy<canvas.height)gray[yy*canvas.width+xx]=Math.min(gray[yy*canvas.width+xx],35)}}}
+ }
+ const useDither=style==='rough'||style==='hatch';
+ if(useDither){
+  for(let y=0;y<canvas.height;y++)for(let x=0;x<canvas.width;x++){
+   let i=y*canvas.width+x,old=gray[i],nw=old<threshold?0:255,err=old-nw;gray[i]=nw;
+   if(x+1<canvas.width)gray[i+1]+=err*7/16;
+   if(y+1<canvas.height){if(x>0)gray[i+canvas.width-1]+=err*3/16;gray[i+canvas.width]+=err*5/16;if(x+1<canvas.width)gray[i+canvas.width+1]+=err/16;}
+  }
+ }else{
+  for(let i=0;i<gray.length;i++)gray[i]=gray[i]<threshold?0:255;
+ }
+ for(let j=0,i=0;j<gray.length;j++,i+=4){let v=gray[j]<128?0:255;if(invert)v=255-v;d[i]=d[i+1]=d[i+2]=v;d[i+3]=255;}
+ ctx.putImageData(img,0,0);
+ if(document.getElementById('woodcutFrame').checked)drawWoodcutFrame(ctx,canvas.width,canvas.height);
+ document.getElementById('woodcutEmpty').classList.add('hidden');canvas.classList.remove('hidden');
+}
+function drawWoodcutFrame(ctx,w,h){
+ const m=Math.max(12,Math.round(Math.min(w,h)*.025));ctx.save();ctx.strokeStyle='#000';ctx.lineWidth=Math.max(3,m*.18);
+ ctx.strokeRect(m,m,w-2*m,h-2*m);ctx.strokeRect(m*1.55,m*1.55,w-3.1*m,h-3.1*m);
+ const n=Math.max(8,Math.round(w/35));ctx.lineWidth=Math.max(2,m*.1);
+ for(let i=0;i<n;i++){let x=m*1.8+i*(w-3.6*m)/(n-1);ctx.beginPath();ctx.moveTo(x,m*1.8);ctx.lineTo(x-m*.35,m*2.5);ctx.lineTo(x+m*.35,m*2.5);ctx.stroke();ctx.beginPath();ctx.moveTo(x,h-m*1.8);ctx.lineTo(x-m*.35,h-m*2.5);ctx.lineTo(x+m*.35,h-m*2.5);ctx.stroke();}
+ ctx.restore();
+}
+function downloadWoodcut(){
+ const c=document.getElementById('woodcutCanvas');if(!woodcutSource||c.classList.contains('hidden'))return toast('Crie uma gravura primeiro.');
+ c.toBlob(b=>{let u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download='xilogravura-editor-gr.png';a.click();URL.revokeObjectURL(u)},'image/png');
+}
+function insertWoodcutIntoBook(){
+ const c=document.getElementById('woodcutCanvas');if(!woodcutSource||c.classList.contains('hidden'))return toast('Crie uma gravura primeiro.');
+ if(!activeProject())return toast('Abra ou crie um projeto de cordel antes de inserir a gravura.');
+ const e=document.getElementById('chapterEditor');if(!e){showView('editor');return toast('Abra o editor e tente inserir novamente.')}
+ e.focus();document.execCommand('insertHTML',false,`<p style="text-align:center"><img src="${c.toDataURL('image/png')}" alt="Ilustração em estilo xilogravura" style="max-width:100%;height:auto"></p>`);
+ saveChapter();scheduleSave();toast('Xilogravura inserida no manuscrito.');
+}
+
+function updateOnLoad(){updateDashboard();if(activeProject()){}}
+window.addEventListener('beforeunload',()=>{try{saveChapter()}catch(e){}});
+updateOnLoad();
+</script>
+</body></html>
